@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>config/egm96.txt</file>
+</qresource>
+</RCC>
