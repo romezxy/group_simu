@@ -41,6 +41,7 @@ public:
     void addCurvePlot(QString curveNameScaled, QVector<double> *xData, QVector<double> *yData,QPen pen);
     void preparePlot(bool timeScale);
     void PlotData(double data);
+    void PlotData2d(double xdata, double ydata);
 
 private slots:
     void showCurve(QwtPlotItem *item, bool on);

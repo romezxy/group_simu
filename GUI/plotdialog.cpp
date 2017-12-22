@@ -39,6 +39,10 @@ void PlotDialog::AddPlotData(){
     dm->GetPlotData(&data);
 
     plot->PlotData(data);
+
+    double xdata,ydata;
+    dm->GetPlotData2d(&xdata, &ydata);
+    plot->PlotData2d(xdata, ydata);
 }
 
 
@@ -48,23 +52,21 @@ ScopeLocal::ScopeLocal(QwtPlot *parent): QwtPlot(parent)
     m_yData = new QVector<double>();
     antialiased = true;
 
-    timeScale = true;
+    timeScale = false;
     m_xWindowSize = 5000;
 
     m_data = new QVector<double>();
     m_time = new QVector<double>();
 
-    preparePlot(true);
+    preparePlot(timeScale);
 }
 
 void ScopeLocal::clearCurvePlots()
 {
     foreach(QwtPlotCurve * curve, m_curvesData.values()) {
         curve->detach();
-
         delete curve;
     }
-
     m_curvesData.clear();
 }
 
@@ -177,6 +179,7 @@ void ScopeLocal::preparePlot(bool timeScale)
                                Qt::BevelJoin);
 
     addCurvePlot("yaw",m_time, m_data, *pen);
+    addCurvePlot("2d",m_xData, m_yData, *pen);
 
 }
 
@@ -224,6 +227,32 @@ void ScopeLocal::doRePlot(){
     mutex.lock();
     replot();
     mutex.unlock();
+}
+
+void ScopeLocal::PlotData2d(double xdata, double ydata){
+
+    //QDateTime NOW = QDateTime::currentDateTime();
+    //double valueX = NOW.toTime_t() + NOW.time().msec() / 1000.0;
+
+    //add data here
+    m_xData->append(xdata);
+    m_yData->append(ydata);
+
+    removeStaleData(m_xData);
+    removeStaleData(m_yData);
+
+    foreach(QString  name1, m_curvesData.keys()) {
+        foreach(QString  name2, m_localData.keys()){
+            if(name1==name2){
+                QwtPlotCurve * curve = m_curvesData.value(name1);
+                QVector<double> *data = m_localData.value(name2);
+                curve->setSamples(*m_xData,*data);
+                continue;
+            }
+        }
+    }
+
+    replot();
 }
 
 void ScopeLocal::PlotData(double data){

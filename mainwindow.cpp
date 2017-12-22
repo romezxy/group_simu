@@ -14,7 +14,8 @@ MainWindow::MainWindow(QWidget *parent) :
     send = new RUdpSend(this);
     timer = new QTimer(this);
     plane = new planesimulator::PlaneModel(this);
-    ctrller = new GNC::Controller(this,plane);
+    gui = new GNC::guidance(this,plane);
+    ctrller = new GNC::Controller(this,plane,gui);
     scope = new PlotDialog();
 
     layout->addWidget(scope);
@@ -34,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timer, SIGNAL(timeout()), scope, SLOT(AddPlotData()));
 
     plane->InitialPlane();
+    ctrller->InitialCtrller();
 
     timer->setInterval(0.02*1000);
     timer->start();

@@ -10,6 +10,7 @@
 //#include "EGM9615.h"
 #include "chrono"
 #include "planemodel.h"
+#include "data/datamanager.h"
 
 namespace planesimulator {
 
@@ -39,6 +40,7 @@ private:
     PlaneModel *plane;
     Frame *frame;
     logSystem *log;
+    DataManager *dm;
 
     double egm96Tabel[360][181];
     double egm96LatTabel[181];

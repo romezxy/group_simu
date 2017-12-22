@@ -10,6 +10,7 @@
 #include "io/rudpsend.h"
 #include "plane/planemodel.h"
 #include "GNC/controller.h"
+#include "GNC/guidance.h"
 #include "config/config.h"
 #include "GUI/plotdialog.h"
 #include <QVBoxLayout>
@@ -41,6 +42,7 @@ private:
     DataManager *dm;
     QTimer *timer;
     planesimulator::PlaneModel *plane;
+    GNC::guidance *gui;
     GNC::Controller *ctrller;
     PlotDialog *scope;
 

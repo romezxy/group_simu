@@ -17,15 +17,15 @@ TARGET = center
 TEMPLATE = app
 
 DEFINES += GSL_DLL
-INCLUDEPATH += /media/rome/LENOVO/e/code/RGruopControlCenter/center_0.3/3rd_lib/include
-LIBS += -L/media/rome/LENOVO/e/code/RGruopControlCenter/center_0.3/3rd_lib -lgsl
-LIBS += -L/media/rome/LENOVO/e/code/RGruopControlCenter/center_0.3/3rd_lib -lgslcblas
-LIBS += -L/media/rome/LENOVO/e/code/RGruopControlCenter/center_0.3/3rd_lib -lqwt
-#INCLUDEPATH += D:\e\code\RGruopControlCenter\center_0.3\3rd_lib\include
-#LIBS += -LD:\e\code\RGruopControlCenter\center_0.3\3rd_lib\ -lgsl
-#LIBS += -LD:\e\code\RGruopControlCenter\center_0.3\3rd_lib\ -lgslcblas
-#LIBS += -LD:\e\code\RGruopControlCenter\center_0.3\3rd_lib\ -lqwt
-#LIBS += -LD:\e\code\RGruopControlCenter\center_0.3\3rd_lib\ -lqwtd
+#INCLUDEPATH += /media/rome/LENOVO/e/code/RGruopControlCenter/center_0.3/3rd_lib/include
+#LIBS += -L/media/rome/LENOVO/e/code/RGruopControlCenter/center_0.3/3rd_lib -lgsl
+#LIBS += -L/media/rome/LENOVO/e/code/RGruopControlCenter/center_0.3/3rd_lib -lgslcblas
+#LIBS += -L/media/rome/LENOVO/e/code/RGruopControlCenter/center_0.3/3rd_lib -lqwt
+INCLUDEPATH += E:\myWork\RGruopControlCenter\center_0.3\3rd_lib\include
+LIBS += -LE:\myWork\RGruopControlCenter\center_0.3\3rd_lib\ -lgsl
+LIBS += -LE:\myWork\RGruopControlCenter\center_0.3\3rd_lib\ -lgslcblas
+#LIBS += -LE:\myWork\RGruopControlCenter\center_0.3\3rd_lib\ -lqwt
+LIBS += -LE:\myWork\RGruopControlCenter\center_0.3\3rd_lib\ -lqwtd
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
@@ -53,6 +53,8 @@ SOURCES += \
     data/logSystem.cpp \
     3rd_lib/GeomagnetismLibrary.c \
     GUI/plotdialog.cpp \    
+    GNC/guidance.cpp \
+    GNC/navigation.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -67,7 +69,9 @@ HEADERS += \
     data/datamanager.h \
     data/logSystem.h \
     config/config.h \
-    GUI/plotdialog.h
+    GUI/plotdialog.h \
+    GNC/guidance.h \
+    GNC/navigation.h
 
 FORMS += \
         mainwindow.ui \

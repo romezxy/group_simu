@@ -26,6 +26,12 @@ public:
 
     void SetPlotData(double data);
     void GetPlotData(double *data);
+    void SetPlotData2d(double xdata, double ydata);
+    void GetPlotData2d(double *xdata, double *ydata);
+
+    void CrossProduct(float v1[3], float v2[3], float result[3]);
+    double boundData(double data, double min, double max);
+    float boundData(float data, float min, float max);
 
 signals:
 
@@ -38,6 +44,7 @@ private:
     plane p4;
 
     double plotdata;
+    double plotxdata, plotydata;
 };
 
 #endif // DATAMANAGER_H

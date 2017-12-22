@@ -39,12 +39,14 @@ public:
     double p, q, r;
     double alpha, beta;
     double dotalpha, dotbeta;
-    double da,de,dr,df;
+    double da,de,dr,df,thr;
     double V;
     double u, v, w;//v in body
     double vn, ve, vd;//v in reference;
     double h, posn, pose;//position in meter
     double latitude, longtitude;
+    double G;
+    double pdyn;
     Frame *frame;
     Propulsion *prop;
     EarthAndAtmosphere *eaa;
@@ -84,7 +86,7 @@ private:
     double rHub[3], rAC[3];
 
     //earth and air
-    double pdyn, G;
+    //double pdyn;
     double Rm, Rn;
     double windx,windy,windz;//wind velocity in body
 

@@ -28,7 +28,7 @@ public:
 
     void initialPropusion();
 
-    void getProp(double *F, double *M);
+    void getProp(double *F, double *M, float thr);
     float fuelMass, fuelflow;
 
 signals:

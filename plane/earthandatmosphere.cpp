@@ -16,6 +16,7 @@ EarthAndAtmosphere::EarthAndAtmosphere(QObject *parent, PlaneModel *p, Frame *f)
     plane = p;
     frame = f;
     log = logSystem::instance();
+    dm = DataManager::instance();
 
 }
 
@@ -181,6 +182,9 @@ void EarthAndAtmosphere::GetEgm96Alt(double *MSLAlt){
 
     lon *= 180/M_PI;
     lat *= 180/M_PI;
+
+    lat = dm->boundData(lat, -90, 90);
+    lon = dm->boundData(lon, 0, 360);
 
     double tmp = gsl_spline2d_eval(splineEgm96, lat, lon, xaccEgm96, yaccEgm96);
 

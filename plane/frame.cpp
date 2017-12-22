@@ -53,9 +53,9 @@ void Frame::RPY2Quaternion(double *rpy, double *q)
     double phi, theta, psi;
     double cphi, sphi, ctheta, stheta, cpsi, spsi;
 
-    phi    = DEG2RAD(rpy[0] / 2);
-    theta  = DEG2RAD(rpy[1] / 2);
-    psi    = DEG2RAD(rpy[2] / 2);
+    phi    = rpy[0] / 2;
+    theta  = rpy[1] / 2;
+    psi    = rpy[2] / 2;
 
     cphi   = cosf(phi);
     sphi   = sinf(phi);

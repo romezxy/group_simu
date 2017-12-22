@@ -49,3 +49,25 @@ void DataManager::SetPlotData(double data){
 void DataManager::GetPlotData(double *data){
     *data = plotdata;
 }
+
+void DataManager::SetPlotData2d(double xdata, double ydata){
+    plotxdata = xdata;
+    plotydata = ydata;
+}
+void DataManager::GetPlotData2d(double *xdata, double *ydata){
+    *xdata = plotxdata;
+    *ydata = plotydata;
+}
+
+void DataManager::CrossProduct(float v1[3], float v2[3], float result[3]){
+    result[0] = v1[1] * v2[2] - v2[1] * v1[2];
+    result[1] = v2[0] * v1[2] - v1[0] * v2[2];
+    result[2] = v1[0] * v2[1] - v2[0] * v1[1];
+}
+
+double DataManager::boundData(double data, double min, double max){
+    return data>max?(max):(data<min?(min):(data));
+}
+float DataManager::boundData(float data, float min, float max){
+    return data>max?(max):(data<min?(min):(data));
+}

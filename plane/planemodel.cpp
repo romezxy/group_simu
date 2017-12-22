@@ -19,18 +19,6 @@ PlaneModel::PlaneModel(QObject *parent) : QObject(parent)
 
 void PlaneModel::GetParameters(){
 
-/*    size_t xsize = 8;
-    size_t ysize = 10;
-    const gsl_interp2d_type *T = gsl_interp2d_bilinear;
-    gsl_spline2d *spline = gsl_spline2d_alloc(T,  xsize, ysize);
-    gsl_interp_accel *xacc = gsl_interp_accel_alloc();
-    gsl_interp_accel *yacc = gsl_interp_accel_alloc();
-
-    gsl_spline2d_init(spline, &deTable[0], &alphaTabel[0], &CDTabel[0][0], xsize, ysize);
-
-    CD = gsl_spline2d_eval(spline, de, alpha, xacc, yacc);
-*/
-
     CL = CL0 + CLa*alpha + CLdf*df + CLde*de + (CLalphadot*dotalpha+CLq*q)*MAC/(V*2);
 
     double AR = gsl_pow_2(b)/S;
@@ -60,6 +48,8 @@ void PlaneModel::GetAeroForcesAndMoments(){
     //rho = pow(1.225*(1-2.0323*0.00001*h),4.830);
     eaa->GetAtmosphere();
     eaa->GetWGS84(&Rm, &Rn, &G);
+    prop->getProp(&Fprop, &Mprop, thr);
+
     double rho = eaa->rho;
 
     pdyn = 0.5 * rho * V * V;
@@ -88,7 +78,7 @@ void PlaneModel::GetAeroForcesAndMoments(){
 
     Maeroz = Cn * pdyn * S * b;
 
-    prop->getProp(&Fprop, &Mprop);
+
 
 //    Fx += Fprop;
 //    Mx += Mprop;
@@ -301,12 +291,13 @@ void PlaneModel::DifferentialEquation(double *dotX, double *X)
     dotX[8] = u*q - v*p + Gbody[2] + az;//dotw
 
     frame->Body2Frame(ubody, uframe);
+
     dotX[9] = uframe[0];//dotposx
     dotX[10] = uframe[1];//dotposy
     dotX[11] = uframe[2];//dotposz
 
     dotX[12] = uframe[0]/(Rm+posz);//dotlat
-    dotX[13] = uframe[1]/((Rm+posz)*cos(latitude));//dotlon
+    dotX[13] = uframe[1]/((Rn+posz)*cos(latitude));//dotlon
 
 }
 
@@ -334,7 +325,7 @@ void PlaneModel::Solver(){
     X[0] = p;X[1] = q;X[2] = r;
     X[3] = phi;X[4] = theta;X[5] = psi;
     X[6] = u;X[7] = v;X[8] = w;
-    X[9] = posn;X[10] = pose;X[11] = h;
+    X[9] = posn;X[10] = pose;X[11] = -h;
     X[12] = latitude, X[13] = longtitude;
 
     for (int i = 0; i < statesNumber; i++) {
@@ -363,7 +354,16 @@ void PlaneModel::Solver(){
     p = X[0];q = X[1];r = X[2];
     phi = X[3];theta = X[4];psi = X[5];
     u = X[6];v = X[7];w = X[8];
-    posn = X[9];pose = X[10];h = X[11];
+
+    double ubody[3],uframe[3];
+    ubody[0] = u; ubody[1] = v; ubody[2] = w;
+    uframe[0] = 0.0; uframe[1] = 0.0; uframe[2] = 0.0;
+    frame->Body2Frame(ubody, uframe);
+    vn = uframe[0];
+    ve = uframe[1];
+    vd = uframe[2];
+
+    posn = X[9];pose = X[10];h = -X[11];
     latitude = X[12], longtitude = X[13];
 
     static int dd = 0;
@@ -371,7 +371,7 @@ void PlaneModel::Solver(){
     dd++;
 
     //if(dd==1){
-    if(simuTime>50){
+    if(simuTime>120){
         //dd--;
         isRun = false;
     }
@@ -424,17 +424,22 @@ void PlaneModel::GetAlphaAndBeta(){
 }
 
 void PlaneModel::SetCtrller(double *ctrller){
-    da = ctrller[0];
-    de = ctrller[1];
-    dr = ctrller[2];
 
-            dm->SetPlotData(theta*180/M_PI);
+
+    da = -ctrller[0]>(20*M_PI/180)?(20*M_PI/180):(-ctrller[0]<(-20*M_PI/180)?(-20*M_PI/180):-ctrller[0]);
+    de = -ctrller[1]>(20*M_PI/180)?(20*M_PI/180):(-ctrller[1]<(-20*M_PI/180)?(-20*M_PI/180):-ctrller[1]);
+    dr = -ctrller[2]>(20*M_PI/180)?(20*M_PI/180):(-ctrller[2]<(-20*M_PI/180)?(-20*M_PI/180):-ctrller[2]);
+    thr = ctrller[3];
+    de = ctrller[1];
+
+    //dm->SetPlotData(psi*180/M_PI);
+
 }
 
 void PlaneModel::InitialPlane(){
 
     phi = theta = 0;
-    psi = 45*M_PI/180;
+    psi =0*M_PI/180;
     p = q = r = 0;
     alpha = beta = 0;
     S = 0.55;
@@ -443,6 +448,7 @@ void PlaneModel::InitialPlane(){
     da = dr = 0; de = -0.15;
     V = u = 23;
     v = w = 0;
+    vn = ve = vd = 0;
     mempty = 8.5; // kg
     mgross = 13.5; // kg
     CGempty[0]=0.156; CGempty[1]=0; CGempty[2]=0.079; // m, [x y z]
@@ -455,6 +461,7 @@ void PlaneModel::InitialPlane(){
     Rm=Rn=6378137;
     latitude= 34.5135*M_PI/180;
     longtitude = 113.8582*M_PI/180;
+
     h = 1000;
     posn = pose = 0;
     windx=windy=windz = 0;

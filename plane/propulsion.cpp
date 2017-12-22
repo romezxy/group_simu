@@ -123,7 +123,11 @@ void Propulsion::CalPiston(double P, double T, double Thr, double Mix){
 
     RPM = Omega * 30/M_PI;
 
+    MAP = dm->boundData(MAP, MAPTable[0],MAPTable[8]);
+    RPM = dm->boundData(RPM, RPMTable[0],RPMTable[8]);
+
     double tmp1 = 1/1000.0/3600.0;
+
     double tmp2 = gsl_spline2d_eval(spline, MAP, RPM, xacc, yacc);
     fuelflow = tmp1 * tmp2;
     airflow = fuelflow * Mix;
@@ -140,6 +144,8 @@ void Propulsion::CalPropeller(double airSpeed, double rho){
     double J;//前进比
 
     J = M_PI * airSpeed / (Omega * Rprop);
+
+    J = dm->boundData(J, JTable[0], JTable[15]);
 
     CT = gsl_spline_eval(spline_cubic, J, acc2);
 
@@ -189,9 +195,9 @@ void Propulsion::CalcOmegaIntegration()
 
     double h = time_span.count();
     h = 0.02;
-    Omega += 0.5 * h * (dotOmega + dotOmegaLast);
+    //Omega += 0.5 * h * (dotOmega + dotOmegaLast);
 
-    /*double X = Omega, Xlast = X;
+    double X = Omega, Xlast = X;
     double K1,K2,K3,K4;
     double dT = h;
     double dT2 = dT*0.5;
@@ -212,7 +218,7 @@ void Propulsion::CalcOmegaIntegration()
 
     X = Xlast + dT * (K1 + 2.0 * K2 + 2.0 * K3 + K4) / 6.0;
 
-    Omega = X;*/
+    Omega = X;
 
     dotOmegaLast = dotOmega;
     timeStepLast = tNow;
@@ -261,7 +267,7 @@ void Propulsion::CalcOmegaIntegration()
     */
 }
 
-void Propulsion::getProp(double *F, double *M){
+void Propulsion::getProp(double *F, double *M, float thr){
     double P, T, Thr,  Mix;
     double airSpeed, rho;
 
@@ -272,7 +278,8 @@ void Propulsion::getProp(double *F, double *M){
 
     //P = 89876.3; //1000m
     //T = 291.15; //1000m
-    Thr = 0.7;
+    //Thr = 0.7;
+    Thr = thr;
     Mix = 13;
 
     CalPiston(P, T, Thr, Mix);
